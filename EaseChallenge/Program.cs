@@ -16,17 +16,24 @@ namespace EaseChallenge
         {
             try
             {
+                var watch = System.Diagnostics.Stopwatch.StartNew();
                 GlobalPath = new List<Elevation>();
                 StreamReader file = new StreamReader("map.txt");
                 string bounds = file.ReadLine();
                 N = Convert.ToInt32(bounds.Split(' ')[0]);
 
                 Grid = new int[N][];
+                string fileText = file.ReadToEnd();
+                string[] lines = fileText.Split(new[] { "\r\n", "\r", "\n" }, StringSplitOptions.None);
+                lines = lines.Where(x => x != "").ToArray();
                 for (int i = 0; i < N; i++)
                 {
-                    Grid[i] = Array.ConvertAll(file.ReadLine().Split(' '), arr => Convert.ToInt32(arr));
+                    string line = lines[i];
+                    Grid[i] = Array.ConvertAll(line.Split(' '), arr => Convert.ToInt32(arr));
                 }
                 CalculatePath();
+                watch.Stop();
+                var elapsed = watch.ElapsedMilliseconds;
                 Console.WriteLine("Path Length: " + GlobalPath.Count);
                 Console.Write("Path: ");
                 foreach (var item in GlobalPath)
@@ -35,6 +42,7 @@ namespace EaseChallenge
                 }
                 Console.WriteLine();
                 Console.WriteLine("Drop: " + (GlobalPath.FirstOrDefault().Value - GlobalPath.LastOrDefault().Value));
+                Console.WriteLine("Elapsed time: " + Convert.ToDouble(elapsed) / 1000 + "s");
                 Console.ReadLine();
             }
             catch (Exception)
